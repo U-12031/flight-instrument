@@ -1,0 +1,486 @@
+@font-face {
+	font-family: "originalFont";
+	src: url(/0_data/fonts/B612Mono-Regular.ttf) format("truetype");
+	src: url(https://u-12031.github.io/0_data/fonts/B612Mono-Regular.ttf) format("truetype");
+	/* CodeSwing用。あとで消す */
+}
+
+@font-face {
+	font-family: "numFont";
+	src: url(/0_data/fonts/Lekton-Regular.ttf) format("truetype");
+	src: url(https://u-12031.github.io/0_data/fonts/Lekton-Regular.ttf) format("truetype");
+	/* CodeSwing用。あとで消す */
+}
+
+@font-face {
+	font-family: "7segFont";
+	src: url(/0_data/fonts/fonts-DSEG_v046/DSEG7ClassicMini-Bold.ttf) format("truetype");
+	src: url(https://u-12031.github.io/0_data/fonts/fonts-DSEG_v046/DSEG7ClassicMini-Bold.ttf ) format("truetype");
+	/* CodeSwing用、あとで消す */
+}
+
+@keyframes numCarryUp {
+	0% {translate: 0 0;}
+	49.99% {translate: 0 100%;}
+	50% {translate: 0 -100%;}
+	100% {translate: 0 0;}
+}
+
+@keyframes numCarryDown {
+	0% {translate: 0 0;}
+	49.99% {translate: 0 -100%;}
+	50% {translate: 0 100%;}
+	100% {translate: 0 0;}
+}
+
+* {
+	color: white;
+	font-family: "originalFont";
+}
+
+:root {--dark: #110;}
+
+body {
+	text-align: center;
+	margin: 0;
+	background-color: var(--dark);
+}
+
+.display {
+	display: inline-block;
+	font-size: 2.5em;
+	padding: 5px 10px;
+	margin: 0 5px;
+	background-color: #221;
+	color: #eee;
+	cursor: default;
+}
+
+.valueWithSpinBt {margin-top: 5px;}
+
+.valueWithSpinBt>* {
+	display: inline-block;
+	vertical-align: top;
+}
+
+.valueWithSpinBt .display {font-family: "7segFont";}
+
+.plusBt, .minusBt, .leftBt, .rightBt {
+	position: relative;
+	line-height: 50%;
+	font-size: 3em;
+	height: 50px;
+	width: 50px;
+	margin-bottom: 1rem;
+	background-color: #003;
+	border: 0;
+	cursor: pointer;
+	--label: "";
+
+	&:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+	}
+
+	&::after {
+		content: var(--label);
+		position: absolute;
+		left: 0;
+		bottom: 0;
+		translate: 0 100%;
+		font-size: 1rem;
+		width: 100%;
+		background-color: black;
+	}
+}
+
+.toggleBt {
+	appearance: none;
+	-webkit-appearance: none;
+	display: flex;
+	position: relative;
+	width: 40px;
+	height: 40px;
+	margin: 5px auto;
+	border-radius: 2px;
+	border: 2px solid #333;
+	background-color: #222;
+	cursor: pointer;
+
+	&::after {
+		content: "";
+		position: absolute;
+		bottom: 5px;
+		left: 50%;
+		translate: -50% 0;
+		width: 30px;
+		height: 10px;
+		background-color: #333;
+	}
+}
+
+.toggleBt:checked {
+	background-color: #321;
+	border-color: #430;
+
+	&::after {background-color: #e80;}
+}
+
+.rewritableVal {
+	position: relative;
+	left: 50%;
+	translate: -60px 0;
+	margin-top: 5px;
+	display: grid;
+	grid-template-columns: 40px 80px;
+}
+
+.rewritableVal .rewritableDisplay {
+	grid-column: 1 / 3;
+	font-size: 1.5em;
+	background-color: #320;
+	text-align: right;
+	border: 0;
+	color: #eee;
+
+	&:focus {
+		outline: none;
+		background-color: #e80;
+		color: #320;
+	}
+}
+
+.rewritableVal .resetBt, .rewritableVal .setNowBt {
+	font-size: .75em;
+	padding: 3px 0;
+	text-align: center;
+	background-color: #003;
+	border: 1px solid #227;
+	cursor: pointer;
+
+	&:active {background-color: #227;}
+}
+
+.settings {
+	display: grid; /* 初期値として */
+	position: absolute;
+	padding: 10px;
+	background-color: #3f393699;
+	z-index: 1;
+	font-size: .75rem;
+}
+
+.settingsLine {
+	position: absolute;
+	border: 0 solid white; /* 色と形だけ指定 */
+	z-index: 1;
+}
+
+#settingsImg {
+	position: absolute;
+	top: 650px;
+	left: 50%;
+	translate: calc(-50% + -285px) 0;
+	background-color: #3f3936;
+	padding: 7px;
+	border-radius: 100px;
+	cursor: pointer;
+}
+
+#instruments {
+	height: 100vh;
+	white-space: nowrap; /* 要素を横並びにするため */
+	z-index: -2;
+}
+
+.camera#speedMeter, .camera#altitudeMeter {
+	background-color: #444d;
+}
+
+#speedMeter, #altitudeMeter {
+	position: relative;
+	display: inline-block;
+	width: 90px;
+	height: 600px;
+	margin: 25px 0;
+	background-color: #444;
+	z-index: 1; /* これをしないと設定が#centerの背面になってしまう */
+}
+
+#speedNumParent, #altitudeNumParent {
+	position: absolute;
+	top: 50%;
+	translate: 0 -50%;
+	display: flex;
+	height: 100px;
+	background-color: black;
+	border: 3px solid white;
+	border-radius: 2px;
+	font-size: 2.4rem;
+	font-family: "numFont";
+	font-weight: bold;
+	justify-content: center;
+
+	*:not(.settings, .settings *) {
+		display: flex;
+		margin: 0;
+		padding: 0;
+		font-family: "numFont";
+		font-weight: bold;
+	}
+
+	&>span {
+		display: flex;
+		align-items: center;
+		translate: 0 2px;
+		height: 100%;
+		overflow: hidden;
+	}
+
+	&::before, &::after {
+		content: "";
+		position: absolute;
+		top: 50%;
+		translate: 0 -50%;
+	}
+
+	&::before {
+		width: 14px;
+		height: 15px;
+		background-color: white;
+	}
+
+	&::after {
+		width: 12px;
+		height: 13px;
+		background-color: inherit;
+	}
+}
+
+#speedOncePlace, #altitudeTwoPlaces {
+	position: relative;
+	height: 1em;
+
+	&>span {
+		position: absolute;
+		left: 0;
+	}
+}
+
+.oncePlaceTop {top: calc(-1em + 20%);}
+.oncePlaceMiddle {top: 0em;}
+.oncePlaceBottom {top: calc(1em - 20%);}
+
+#speedNumParent {
+	left: -5px;
+	width: 67.5px;
+	height: 4rem;
+
+	&::before, &::after {
+		clip-path: polygon(0 0, 0% 100%, 100% 50%);
+	}
+
+	&::after {right: -11px;}
+
+	&::before {right: -16px;}
+}
+
+#speedOncePlace {width: 20px;}
+
+#altitudeNumParent {
+	right: -25px;
+	width: 85px;
+	height: 3rem;
+
+	&::before, &::after {
+		clip-path: polygon(100% 0, 100% 100%, 0 50%);
+	}
+
+	&::after {left: -11px;}
+
+	&::before {left: -16px;}
+
+}
+
+#altitudeTensPlace {
+	display: flex;
+	font-size: .8em;
+	margin: 2px;
+}
+
+#altitudeTwoPlaces {
+	width: 23px;
+	font-size: 0.6em;
+}
+
+#center {
+	margin: 85px 30px;
+	position: relative;
+	display: inline-block;
+	background-color: #09e;
+	width: 400px;
+	height: 430px;
+	border: none;
+	border-radius: 50px;
+	overflow: hidden;
+	top: 0;
+	left: 0;
+}
+
+.camera#center {
+	background-color: transparent;
+	border-radius: 0;
+	position: fixed;
+	top: 0;
+	left: 0;
+	margin: 0;
+	width: 100%;
+	height: 100%;
+}
+
+#center *:not(.settings, .settings *) {
+	display: block;
+	position: absolute;
+}
+
+.camera#ground {background-color: transparent;}
+
+#ground {
+	top: 50%;
+	left: 50%;
+	translate: -50% 0;
+	transform-origin: top center;
+	background-color: #840;
+	width: 14000px;
+	height: 100%;
+}
+
+.camera#high {clip-path: none;}
+
+#high {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	translate: -50% -50%;
+	width: 400px;
+	height: 430px;
+	clip-path: path("M 0 130 L 25 130 A 200 200 0 0 1 375 130 L 400 130, 400 500, 0 500");
+}
+
+#high .camera#highScale {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+}
+
+#high #highScale {
+	top: -485px;
+	left: -500px;
+	transform-origin: center;
+}
+
+#bank {
+	height: 50%;
+	width: 400px;
+	top: 0;
+	left: 50%;
+	translate: -50% 0;
+}
+
+#bankScale {
+	top: 0;
+	left: 0;
+}
+
+#bankPointer {
+	top: 25px;
+	transform-origin: center 200px;
+}
+
+#symbol {
+	top: 50%;
+	left: 50%;
+	translate: -50% -50%;
+}
+
+#heading {
+	position: absolute;
+	top: 100vh;
+	left: 50%;
+	translate: -50% -110px;
+	background-color: #444;
+	width: 600px;
+	height: 600px;
+	border-radius: 100%;
+	clip-path: polygon(0 -50px, 100% -50px, 100% 110px, 0 110px);
+}
+
+#headingPointer {
+	position:absolute;
+	top: -50px;
+	left:0;
+}
+
+@keyframes startSensorsAni {
+	0% {background-color: #09e;}
+	50% {background-color: #5ef;}
+	100% {background-color: #09e;}
+}
+
+@keyframes enableCameraAni {
+	0% {background-color: #ea0;}
+	50% {background-color: #fd0;}
+	100% {background-color: #ea0;}
+}
+
+#startSensors, #enableCamera {
+	position: absolute;
+	top: 40px;
+	left: 50%;
+	translate: -50% 0;
+	display: flex;
+	padding: 10px 20px;
+	font-size: 1.2rem;
+	font-weight: bold;
+	border: none;
+	border-radius: 5px;
+	color: white;
+	cursor: pointer;
+}
+
+#startSensors {
+	background-color: #09e; /* 初期値として */
+	animation: startSensorsAni 1s ease-in-out infinite;
+}
+
+#enableCamera {
+	background-color: #ea0;
+	animation: enableCameraAni 1s ease-in-out infinite;
+	display: none; /* 初期値として */
+}
+
+#camera {
+	position: fixed;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	z-index: -10000; /* 最背面に配置 */
+	display: none; /* 初期値として */
+	opacity: 0; /* 初期値として */
+}
+
+@keyframes fadeIn {
+	from {opacity: 0;}
+	to {opacity: .7;}
+}
+
+@keyframes speedMeterMove {
+	from {translate: -220px 0;}
+	to {translate: -280px 0;}
+}
+
+@keyframes altitudeMeterMove {
+	from {translate: 220px 0;}
+	to {translate: 280px 0;}
+}
