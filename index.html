@@ -115,16 +115,18 @@
 		<p id="detailText"></p>
 	</div>
 	<script>
+		function el(id) {return document.getElementById(id)}
+
 		const detailText = {
 			standard: "A mode that closely resembles the instruments of a real airplane.<br>The initial settings are the same as those on an airplane, so it may not be suitable for everyday use.",
 			advanced: "This mode offers more features, is easier to use, and allows for a wider range of settings compared to the standard mode.<br>This mode is suitable for everyday use.",
 			camera: "This mode uses video captured by the camera as the background to achieve a simplified form of augmented reality (AR).<br>While it offers a more immersive experience, it may consume more battery power."
-		};
+		}
 		document.querySelectorAll("button").forEach((bt, i) => {
 			bt.addEventListener("mouseenter", () => {
 				const imgPath = `data/${bt.dataset.value}Sample.svg`;
-				document.querySelector("#detailImg").src = imgPath;
-				document.querySelector("#detailText").innerHTML = detailText[bt.dataset.value];
+				el("detailImg").src = imgPath;
+				el("detailText").innerHTML = detailText[bt.dataset.value];
 			});
 		});
 		setTimeout(() => {
