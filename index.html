@@ -171,6 +171,10 @@
 				bt.addEventListener("blur", () => {
 					isFocused = false;
 				});
+			} else {
+				bt.addEventListener("click", () => {
+					window.location.href = value + "/";
+				});
 			}
 		});
 		setTimeout(() => {
